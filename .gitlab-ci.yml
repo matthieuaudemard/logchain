@@ -18,7 +18,7 @@ ng-build:
     - node
   artifacts:
     paths:
-      - dist
+      - logchain-front/dist
 
 docker-build:
   stage: docker-build

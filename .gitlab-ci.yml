@@ -23,6 +23,7 @@ ng-build:
 docker-build:
   stage: docker-build
   only:
+    - develop
     - master
   tags:
     - cli
@@ -33,7 +34,19 @@ docker-build:
     - sudo docker build -t $IMAGE_TAG .
     - sudo docker push $IMAGE_TAG
 
-deploy:
+deploy-develop:
+  stage: deploy
+  only:
+    - develop
+  tags:
+    - cli
+  before_script:
+    - sudo docker login -u $CI_REGISTRY_USER -p $CI_JOB_TOKEN $CI_REGISTRY_IMAGE
+  script:
+    - sudo docker rm -f logchain-dev && echo 'Suppression du container précédent'
+    - sudo docker run -d --name logchain-dev -p 8003:80 $IMAGE_TAG
+
+deploy-prod:
   stage: deploy
   only:
     - master
@@ -42,5 +55,5 @@ deploy:
   before_script:
     - sudo docker login -u $CI_REGISTRY_USER -p $CI_JOB_TOKEN $CI_REGISTRY_IMAGE
   script:
-    - sudo docker rm -f test-project && echo 'Suppression du container précédent'
-    - sudo docker run -d --name test-project -p 8002:80 $IMAGE_TAG
+    - sudo docker rm -f logchain-prod && echo 'Suppression du container précédent'
+    - sudo docker run -d --name logchain-prod -p 8000:80 $IMAGE_TAG

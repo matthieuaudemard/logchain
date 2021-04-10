@@ -1,2 +1,2 @@
 FROM nginx
-COPY dist/ /usr/share/nginx/html
+COPY logchain-front/dist/ /usr/share/nginx/html

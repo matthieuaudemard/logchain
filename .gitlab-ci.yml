@@ -34,26 +34,16 @@ docker-build:
     - sudo docker build -t $IMAGE_TAG .
     - sudo docker push $IMAGE_TAG
 
-deploy-develop:
+deploy:
   stage: deploy
   only:
     - develop
-  tags:
-    - cli
-  before_script:
-    - sudo docker login -u $CI_REGISTRY_USER -p $CI_JOB_TOKEN $CI_REGISTRY_IMAGE
-  script:
-    - sudo docker rm -f logchain-dev && echo 'Suppression du container précédent'
-    - sudo docker run -d --name logchain-dev -p 8003:80 $IMAGE_TAG
-
-deploy-prod:
-  stage: deploy
-  only:
     - master
   tags:
     - cli
   before_script:
     - sudo docker login -u $CI_REGISTRY_USER -p $CI_JOB_TOKEN $CI_REGISTRY_IMAGE
   script:
-    - sudo docker rm -f logchain-prod && echo 'Suppression du container précédent'
-    - sudo docker run -d --name logchain-prod -p 8000:80 $IMAGE_TAG
+    - if [ "$CI_COMMIT_BRANCH " == "master" ]; then NAME="master-logchain"; OUT_PORT="8000"; else NAME="dev-logchain"; OUT_PORT="8003"; fi
+    - sudo docker rm -f logchain-dev && echo 'Suppression du container précédent'
+    - sudo docker run -d --name ${NAME} -p ${OUT_PORT}:80 $IMAGE_TAG

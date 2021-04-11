@@ -9,9 +9,9 @@ variables:
 ng-build:
   stage: ng-build
   before_script:
+    - npm install -g @angular/cli
     - cd logchain-front
   script:
-    - npm install -g @angular/cli
     - npm install --silent
     - ng build
   tags:

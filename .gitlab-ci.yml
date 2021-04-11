@@ -1,10 +1,23 @@
 stages:
+  - test
   - ng-build
   - docker-build
   - deploy
 
 variables:
   IMAGE_TAG: $CI_REGISTRY_IMAGE:$CI_COMMIT_SHA
+
+truffle-test:
+  stage: test
+  before_script:
+    - cd logchain-back
+    - npm install -g ganache-cli truffle
+    - ganache-cli --host 127.0.0.1 --port 7545 &
+  script:
+    - npm install
+    - truffle migrate && truffle test
+  tags:
+    - node
 
 ng-build:
   stage: ng-build

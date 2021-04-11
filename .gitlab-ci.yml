@@ -1,0 +1,59 @@
+stages:
+  - ng-build
+  - docker-build
+  - deploy
+
+variables:
+  IMAGE_TAG: $CI_REGISTRY_IMAGE:$CI_COMMIT_SHA
+
+ng-build:
+  stage: ng-build
+  before_script:
+    - cd logchain-front
+  script:
+    - npm install -g @angular/cli
+    - npm install --silent
+    - ng build
+  tags:
+    - node
+  artifacts:
+    paths:
+      - logchain-front/dist
+
+docker-build:
+  stage: docker-build
+  only:
+    - develop
+    - master
+  tags:
+    - cli
+  before_script:
+    - sudo docker login -u $CI_REGISTRY_USER -p $CI_JOB_TOKEN $CI_REGISTRY_IMAGE
+  script:
+    - echo $IMAGE_TAG
+    - sudo docker build -t $IMAGE_TAG .
+    - sudo docker push $IMAGE_TAG
+
+deploy-develop:
+  stage: deploy
+  only:
+    - develop
+  tags:
+    - cli
+  before_script:
+    - sudo docker login -u $CI_REGISTRY_USER -p $CI_JOB_TOKEN $CI_REGISTRY_IMAGE
+  script:
+    - sudo docker rm -f logchain-dev && echo 'Suppression du container précédent'
+    - sudo docker run -d --name logchain-dev -p 8003:80 $IMAGE_TAG
+
+deploy-prod:
+  stage: deploy
+  only:
+    - master
+  tags:
+    - cli
+  before_script:
+    - sudo docker login -u $CI_REGISTRY_USER -p $CI_JOB_TOKEN $CI_REGISTRY_IMAGE
+  script:
+    - sudo docker rm -f logchain-prod && echo 'Suppression du container précédent'
+    - sudo docker run -d --name logchain-prod -p 8000:80 $IMAGE_TAG

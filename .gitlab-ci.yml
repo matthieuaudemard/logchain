@@ -38,6 +38,7 @@ deploy:
   stage: deploy
   only:
     - master
+    - develop
   tags:
     - cli
   before_script:

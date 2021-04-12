@@ -1,20 +1,20 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { HelloComponent } from './hello.component';
+import { LogOrderListComponent } from './log-order-list.component';
 
-describe('HelloComponent', () => {
-  let component: HelloComponent;
-  let fixture: ComponentFixture<HelloComponent>;
+describe('EventOrderListComponent', () => {
+  let component: LogOrderListComponent;
+  let fixture: ComponentFixture<LogOrderListComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ HelloComponent ]
+      declarations: [ LogOrderListComponent ]
     })
     .compileComponents();
   });
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(HelloComponent);
+    fixture = TestBed.createComponent(LogOrderListComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

@@ -10,19 +10,20 @@ contract Logchain {
         string commitTitle;
         string commitAuthor;
         string commitDiff;
+        string branchName;
 
-        string jobId;
+        uint jobId;
         string jobManual;
         string jobName;
         string jobStage;
         string jobStatus;
         string jobStartedAt;
 
-        string pipelineId;
+        uint pipelineId;
         string pipelineSource;
         string pipelineCreatedAT;
 
-        string gitlabUserId;
+        uint gitlabUserId;
         string gitlabUserLogin;
         string gitlabUserName;
         string gitlabUserMail;

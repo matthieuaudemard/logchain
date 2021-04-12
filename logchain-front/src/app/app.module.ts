@@ -12,7 +12,7 @@ import { HelloComponent } from './components/hello/hello.component';
   ],
   imports: [
     BrowserModule,
-    AppRoutingModule
+    AppRoutingModule,
   ],
   providers: [],
   bootstrap: [AppComponent]

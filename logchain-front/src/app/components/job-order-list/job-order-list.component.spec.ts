@@ -1,20 +1,20 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { LogOrderListComponent } from './log-order-list.component';
+import { JobOrderListComponent } from './job-order-list.component';
 
 describe('EventOrderListComponent', () => {
-  let component: LogOrderListComponent;
-  let fixture: ComponentFixture<LogOrderListComponent>;
+  let component: JobOrderListComponent;
+  let fixture: ComponentFixture<JobOrderListComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ LogOrderListComponent ]
+      declarations: [ JobOrderListComponent ]
     })
     .compileComponents();
   });
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(LogOrderListComponent);
+    fixture = TestBed.createComponent(JobOrderListComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

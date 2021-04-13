@@ -1,5 +1,5 @@
-export interface LogEntry {
-  id: number,
+export interface Job {
+  blockId: number,
   commitSha?: string,
   commitTitle?: string,
   commitAuthor?: string,
@@ -14,7 +14,6 @@ export interface LogEntry {
   jobStartedAt?: string,
 
   pipelineId?: number,
-  pipelineSource?: string,
   pipelineCreatedAt?: string,
 
   gitlabUserId?: number,

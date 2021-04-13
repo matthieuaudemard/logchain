@@ -1,10 +1,10 @@
 pragma solidity >=0.4.22 <0.9.0;
 
-contract Logchain {
+contract Job {
     string public commit;
 
-    struct LogEntry {
-        uint id;
+    struct Job {
+        uint blockId;
 
         string commitSha;
         string commitTitle;
@@ -13,14 +13,13 @@ contract Logchain {
         string branchName;
 
         uint jobId;
-        string jobManual;
+        bool jobManual;
         string jobName;
         string jobStage;
         string jobStatus;
         string jobStartedAt;
 
         uint pipelineId;
-        string pipelineSource;
         string pipelineCreatedAT;
 
         uint gitlabUserId;

@@ -7,6 +7,18 @@ stages:
 variables:
   IMAGE_TAG: $CI_REGISTRY_IMAGE:$CI_COMMIT_SHA
 
+truffle-test:
+  stage: test
+  before_script:
+    - cd logchain-back
+    - npm install -g ganache-cli truffle
+    - npm install
+    - ganache-cli --host 127.0.0.1 --port 7546 &
+  script:
+    - truffle migrate --network test && truffle test --network test
+  tags:
+    - node
+
 ng-build:
   stage: ng-build
   before_script:

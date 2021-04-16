@@ -40,17 +40,18 @@ app.post('/api/jobs/:id', async function (req, res) {
                 const logchain = new web3.eth.Contract(Logchain.abi, networkData.address);
                 // création de Job
                 logchain.methods
-                    .createJob(job.id, job.status, job.started_at ? job.started_at : '')
+                    .createJob(job.id, job.name, job.stage, job.status, job.started_at ? job.started_at : '', job.commit.id, job.commit.title)
                     .estimateGas() // on évalue le coût en gas de la transaction ...
                     .then(estimatedGas => {
                         logchain.methods
-                            .createJob(job.id, job.status, job.started_at ? job.started_at : '')
+                            .createJob(job.id, job.name, job.stage, job.status, job.started_at ? job.started_at : '', job.commit.id, job.commit.title)
                             // ... puis on effectue la transaction en précisant le coût en gas estimé
                             .send({from: accounts[0], gas: estimatedGas})
                             .then(
                                 onResolved => res.status(201).json(onResolved.events.JobCreated.returnValues),
                                 onRejected => res.status(400).json(onRejected)
-                            );
+                            )
+                            .catch(er => {res.status(400).json({message: 'something went wrong ! find out what', er})});
                     })
                     .catch(er => {res.status(400).json({message: 'something went wrong ! find out what', er})});
             }
@@ -61,7 +62,6 @@ app.post('/api/jobs/:id', async function (req, res) {
 });
 
 app.listen(port, function () {
-    const datetime = new Date();
-    const message = "Server runnning on Port:- " + port + "Started at :- " + datetime;
+    const message = "Server runnning on Port:- " + port + ". Started at :- " + new Date();
     console.log(message);
 });

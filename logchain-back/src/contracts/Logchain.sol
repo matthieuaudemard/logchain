@@ -7,15 +7,23 @@ contract Logchain {
     struct Job {
         uint blockId;
         uint jobId;
+        string jobName;
+        string jobStage;
         string jobStatus;
         string jobStartedAt;
+        string commitSha;
+        string commitTitle;
     }
 
     event JobCreated(
         uint blockId,
         uint jobId,
+        string jobName,
+        string jobStage,
         string jobStatus,
-        string jobStartedAt
+        string jobStartedAt,
+        string commitSha,
+        string commitTitle
     );
 
     constructor() public {
@@ -23,20 +31,32 @@ contract Logchain {
 
     function createJob(
         uint _jobId,
+        string memory _jobName,
+        string memory _jobStage,
         string memory _jobStatus,
-        string memory _jobStartedAt
+        string memory _jobStartedAt,
+        string memory _commitSha,
+        string memory _commitTitle
     ) public {
         require(_jobId > 0);
         jobCount ++;
         jobs[jobCount] = Job(
             jobCount,
             _jobId,
+            _jobName,
+            _jobStage,
             _jobStatus,
-            _jobStartedAt);
+            _jobStartedAt,
+            _commitSha,
+            _commitTitle);
         emit JobCreated(
             jobCount,
             _jobId,
+            _jobName,
+            _jobStage,
             _jobStatus,
-            _jobStartedAt);
+            _jobStartedAt,
+            _commitSha,
+            _commitTitle);
     }
 }

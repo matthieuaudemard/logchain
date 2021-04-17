@@ -22,7 +22,9 @@ app.get('/api/jobs', async function (req, res) {
         const jobs = [];
         for (let i = 1; i < jobCount + 1; i++) {
             const job = await logchain.methods.jobs(i).call();
-            jobs.push(job);
+            if (parseInt(job.jobId)) {
+                jobs.push(job);
+            }
         }
 
         res.status(200)

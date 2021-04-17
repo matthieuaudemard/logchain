@@ -2,7 +2,7 @@ const express = require('express');
 const app = express();
 const port = process.env.port || 1337;
 const Web3 = require('web3');
-const web3 = new Web3('http://localhost:7545');
+const web3 = new Web3('ws://localhost:7545');
 const request = require('request');
 const Logchain = require('./abis/Logchain.json');
 
@@ -16,32 +16,27 @@ app.use(function (req, res, next) {
 app.get('/api/jobs', async function (req, res) {
     const networkId = await web3.eth.net.getId();
     const networkData = Logchain.networks[networkId];
+
     if (networkData) {
         const logchain = new web3.eth.Contract(Logchain.abi, networkData.address);
-        const jobCount = await logchain.methods.jobCount().call();
-        const jobs = [];
-        for (let i = 1; i < jobCount + 1; i++) {
-            const job = await logchain.methods.jobs(i).call();
-            if (parseInt(job.jobId)) {
-                jobs.push(job);
-            }
-        }
-
-        res.status(200)
-            .json(
-                jobs.map(job => ({
-                    blockId: job.blockId,
-                    jobId: job.jobId,
-                    jobName: job.jobName,
-                    jobStage: job.jobStage,
-                    jobStatus: job.jobStatus,
-                    jobStartedAt: job.jobStartedAt,
-                    commitSha: job.commitSha,
-                    commitTitle: job.commitTitle
-                }))
-            );
+        logchain.getPastEvents('JobCreated', {fromBlock: 0, toBlock: 'latest'}).then((events) => {
+            //filtrage des données de l'event pour ne garder que les données des jobs
+            const jobs = events.map(event => ({
+                blockId: event.returnValues.blockId,
+                jobId: event.returnValues.jobId,
+                jobName: event.returnValues.jobName,
+                jobStage: event.returnValues.jobStage,
+                jobStatus: event.returnValues.jobStatus,
+                jobStartedAt: event.returnValues.jobStartedAt,
+                commitSha: event.returnValues.commitSha,
+                commitTitle: event.returnValues.commitTitle,
+            }));
+            res.status(200).json(jobs);
+        }).catch(err => {
+            console.log(err);
+            res.status(500).json(err);
+        });
     }
-    res.status(500).send();
 });
 
 app.get('/api/jobs/:blockId', async function (req, res) {
@@ -54,7 +49,7 @@ app.post('/api/jobs/:id', async function (req, res) {
     // Récupération des donées du job depuis l'api gitlab
     request({
         // TODO: charger l'adresse de l'api à l'aide d'une variable (package.json ?) plutôt qu'en dur
-        url: 'http://192.168.1.60/api/v4/projects/3/jobs/' + jobId,
+        url: 'http://176.131.54.227:1001/api/v4/projects/3/jobs/' + jobId,
         headers: {'Authorization': 'Bearer sKKsD1h3bJ5fE9J9KqK5'},
         rejectUnauthorized: false
     }, async function (error, response) {

@@ -1,6 +1,6 @@
 import {Component, OnInit} from '@angular/core';
-import {JobService} from "../../services/job.service";
-import {Job} from "../../models/job";
+import {JobService} from '../../services/job.service';
+import {Job} from '../../models/job';
 
 @Component({
   selector: 'app-event-order-list',
@@ -11,11 +11,11 @@ export class JobOrderListComponent implements OnInit {
 
   jobs!: Job[];
 
-  constructor(private logEntryService: JobService) {
+  constructor(private JobService: JobService) {
   }
 
   ngOnInit(): void {
-    this.logEntryService.getAll().subscribe(jobs => this.jobs = jobs);
+    this.JobService.getAll().subscribe(jobs => this.jobs = jobs);
   }
 
 }

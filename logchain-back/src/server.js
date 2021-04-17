@@ -14,7 +14,32 @@ app.use(function (req, res, next) {
 });
 
 app.get('/api/jobs', async function (req, res) {
-    res.json({msg: 'Renvoie tous les jobs enregistrés dans la blockchain'});
+    const networkId = await web3.eth.net.getId();
+    const networkData = Logchain.networks[networkId];
+    if (networkData) {
+        const logchain = new web3.eth.Contract(Logchain.abi, networkData.address);
+        const jobCount = await logchain.methods.jobCount().call();
+        const jobs = [];
+        for (let i = 1; i < jobCount + 1; i++) {
+            const job = await logchain.methods.jobs(i).call();
+            jobs.push(job);
+        }
+
+        res.status(200)
+            .json(
+                jobs.map(job => ({
+                    blockId: job.blockId,
+                    jobId: job.jobId,
+                    jobName: job.jobName,
+                    jobStage: job.jobStage,
+                    jobStatus: job.jobStatus,
+                    jobStartedAt: job.jobStartedAt,
+                    commitSha: job.commitSha,
+                    commitTitle: job.commitTitle
+                }))
+            );
+    }
+    res.status(500).send();
 });
 
 app.get('/api/jobs/:blockId', async function (req, res) {
@@ -51,9 +76,13 @@ app.post('/api/jobs/:id', async function (req, res) {
                                 onResolved => res.status(201).json(onResolved.events.JobCreated.returnValues),
                                 onRejected => res.status(400).json(onRejected)
                             )
-                            .catch(er => {res.status(400).json({message: 'something went wrong ! find out what', er})});
+                            .catch(er => {
+                                res.status(400).json({message: 'something went wrong ! find out what', er})
+                            });
                     })
-                    .catch(er => {res.status(400).json({message: 'something went wrong ! find out what', er})});
+                    .catch(er => {
+                        res.status(400).json({message: 'something went wrong ! find out what', er})
+                    });
             }
         } else {
             res.status(400).send();

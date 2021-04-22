@@ -1,69 +1,46 @@
+image: docker
+
+services:
+  - docker:dind
+
 stages:
   - test
-  - ng-build
-  - docker-build
+  - build
   - deploy
 
-variables:
-  IMAGE_TAG: $CI_REGISTRY_IMAGE:$CI_COMMIT_SHA
-
-truffle-test:
+test:
   stage: test
-  before_script:
-    - cd logchain-back
-    - npm install -g ganache-cli truffle
-    - npm install
-    - ganache-cli --host 127.0.0.1 --port 7546 &
   script:
-    - truffle migrate --network test && truffle test --network test
-  tags:
-    - node
-
-ng-build:
-  stage: ng-build
-  before_script:
-    - npm install -g @angular/cli
-    - cd logchain-front
-  script:
-    - npm install --silent
-    - ng build
-  tags:
-    - node
-  artifacts:
-    paths:
-      - logchain-front/dist
-
-docker-build:
-  stage: docker-build
-  only:
-    - develop
-    - master
+    - let job_id=$CI_JOB_ID-1
+    - echo $job_id
   tags:
     - cli
+
+
+docker-build:
+  stage: build
   before_script:
+    - echo 'pruning docker images'
+    - sudo docker image prune -f
     - sudo docker login -u $CI_REGISTRY_USER -p $CI_JOB_TOKEN $CI_REGISTRY_IMAGE
   script:
-    - echo $IMAGE_TAG
-    - sudo docker build -t $IMAGE_TAG .
-    - sudo docker push $IMAGE_TAG
+    - sudo docker-compose --env-file ./config/gitlab.env build --no-cache
+  after_script:
+    - curl -X POST http://localhost:3333/api/jobs/$CI_JOB_ID
+  tags:
+    - cli
+  only:
+    - master
 
 deploy:
   stage: deploy
-  only:
-    - master
-    - develop
-  tags:
-    - cli
   before_script:
     - sudo docker login -u $CI_REGISTRY_USER -p $CI_JOB_TOKEN $CI_REGISTRY_IMAGE
   script:
-    - >
-      if [ "$CI_COMMIT_BRANCH" == "master" ]; then
-        NAME="logchain-master";
-        OUT_PORT="8000";
-      else
-        NAME="logchain-dev";
-        OUT_PORT="8003";
-      fi
-    - sudo docker rm -f ${NAME} && echo 'Suppression du container précédent'
-    - sudo docker run -d --name ${NAME} -p ${OUT_PORT}:80 $IMAGE_TAG
+    - sudo docker-compose --env-file ./config/gitlab.env up -d
+  after_script:
+    - curl -X POST http://localhost:3333/api/jobs/$CI_JOB_ID
+  tags:
+    - cli
+  only:
+    - master

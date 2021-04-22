@@ -7,15 +7,14 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
   providedIn: 'root'
 })
 export class JobService {
-  private endPoint = 'http://localhost:1337';
+  private API_URL = 'http://server:3333';
 
   constructor(private httpClient: HttpClient) { }
 
   /**
    * Renvoie tous les LogEntry enregistrés sur la blockchain
-   * TODO: interroger l'api pour récupérer les objets
    */
   public getAll(): Observable<Job[]> {
-    return this.httpClient.get<Job[]>(this.endPoint + '/api/jobs');
+    return this.httpClient.get<Job[]>(this.API_URL + '/api/jobs');
   }
 }

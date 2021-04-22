@@ -4,7 +4,7 @@
   "description": "api du projet logchain",
   "main": "src/server.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "truffle migrate --network develop && node src/server.js"
   },
   "author": "",
   "license": "ISC",

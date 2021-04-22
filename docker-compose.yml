@@ -1,0 +1,39 @@
+version: '2' # specify docker-compose version
+
+# Define the services/containers to be run
+services:
+  blockchain: # name of the third service
+    image: "$REGISTRY/blockchain:latest"
+    build: .
+    ports:
+      - "8545:8545" # specify port forwarding
+    hostname: blockchain
+    #volumes:
+     # - ./ganache_data:/ganache_data
+    entrypoint:
+      - ganache-cli
+      - --deterministic
+      - --db=/ganache_data
+      - --mnemonic
+      - 'toward elephant meadow idea cup spawn grow strike feel pitch hold suit'
+      - --networkId
+      - '5777'
+      - --hostname
+      - '0.0.0.0'
+
+  client: # name of the first service
+    image: "$REGISTRY/front:latest"
+    build: logchain-front # specify the directory of the Dockerfile
+    links:
+      - server
+    ports:
+      - "4200:4200" # specify port forwarding
+
+  server: #name of the second service
+    image: "$REGISTRY/back:latest"
+    build: logchain-back # specify the directory of the Dockerfile
+    ports:
+      - "3333:3333" #specify ports forwarding
+    depends_on:
+      - blockchain
+    restart: always

@@ -1,10 +1,11 @@
 const express = require('express');
 const app = express();
-const port = process.env.port || 1337;
+const port = process.env.port || 3333;
 const Web3 = require('web3');
-const web3 = new Web3('ws://localhost:7545');
+const web3 = new Web3('ws://blockchain:8545');
 const request = require('request');
 const Logchain = require('./abis/Logchain.json');
+//const account = '0x0C21A3682a197D0550fcAFb4A1b1Cf7262adeebb';
 
 // autorisation des CORS
 app.use(function (req, res, next) {
@@ -14,11 +15,12 @@ app.use(function (req, res, next) {
 });
 
 app.get('/api/jobs', async function (req, res) {
-    const networkId = await web3.eth.net.getId();
+    const networkId = await web3.eth.net.getId().catch(() => res.status(500).json({msg: 'cannot access to networkId', job: 'job'}));
     const networkData = Logchain.networks[networkId];
-
+    console.log("[" + new Date() + "]: received request for jobs listing");
     if (networkData) {
         const logchain = new web3.eth.Contract(Logchain.abi, networkData.address);
+        console.log("[" + new Date() + "]: fetching all jobs");
         logchain.getPastEvents('JobCreated', {fromBlock: 0, toBlock: 'latest'}).then((events) => {
             //filtrage des données de l'event pour ne garder que les données des jobs
             const jobs = events.map(event => ({
@@ -31,9 +33,10 @@ app.get('/api/jobs', async function (req, res) {
                 commitSha: event.returnValues.commitSha,
                 commitTitle: event.returnValues.commitTitle,
             }));
+            console.log("[" + new Date() + "]: " + jobs.length + " received");
             res.status(200).json(jobs);
         }).catch(err => {
-            console.log(err);
+            console.log("[" + new Date() + "]: " + "blockchain unavailable");
             res.status(500).json(err);
         });
     }
@@ -49,16 +52,16 @@ app.post('/api/jobs/:id', async function (req, res) {
     // Récupération des donées du job depuis l'api gitlab
     request({
         // TODO: charger l'adresse de l'api à l'aide d'une variable (package.json ?) plutôt qu'en dur
-        url: 'http://176.131.54.227:1001/api/v4/projects/3/jobs/' + jobId,
-        headers: {'Authorization': 'Bearer sKKsD1h3bJ5fE9J9KqK5'},
+        url: 'http://192.168.1.48/api/v4/projects/4/jobs/' + jobId,
+        headers: {'Authorization': 'Bearer QxQzxCkqWSxjvHFdG4sc'},
         rejectUnauthorized: false
     }, async function (error, response) {
         if (!error) {
+            const accounts = await web3.eth.getAccounts().catch(err => res.status(400).json({msg: 'error while getting accounts', job: job}));
             const job = JSON.parse(response.body);
-            const accounts = await web3.eth.getAccounts().catch(err => res.status(400).json(err));
             const networkId = await web3.eth.net.getId();
             const networkData = Logchain.networks[networkId];
-            if (networkData) {
+            if (networkData && job && job.id) {
                 const logchain = new web3.eth.Contract(Logchain.abi, networkData.address);
                 // création de Job
                 logchain.methods
@@ -70,19 +73,31 @@ app.post('/api/jobs/:id', async function (req, res) {
                             // ... puis on effectue la transaction en précisant le coût en gas estimé
                             .send({from: accounts[0], gas: estimatedGas})
                             .then(
-                                onResolved => res.status(201).json(onResolved.events.JobCreated.returnValues),
-                                onRejected => res.status(400).json(onRejected)
+                                onResolved => {
+                                    const jobCreated = onResolved.events.JobCreated.returnValues;
+                                    console.log("[" + new Date() + "]: job created: " + jobCreated);
+                                    res.status(201).json(jobCreated);
+                                },
+                                () => {
+                                    console.log("[" + new Date() + "]: error while trying to save job");
+                                    res.status(400).json({'msg': 'error while sending transaction'});
+                                }
                             )
                             .catch(er => {
-                                res.status(400).json({message: 'something went wrong ! find out what', er})
+                                console.log("[" + new Date() + "]: " + "unable to send to blockchain");
+                                res.status(400).json({message: 'something went wrong ! find out what 2', er})
                             });
                     })
                     .catch(er => {
-                        res.status(400).json({message: 'something went wrong ! find out what', er})
+                        console.log("[" + new Date() + "]: " + "unable to compute gas needed");
+                        res.status(400).json({message: 'something went wrong ! find out what 1', er})
                     });
+            } else {
+                console.log("[" + new Date() + "]: unable to find network data");
             }
         } else {
-            res.status(400).send();
+            console.log("[" + new Date() + "]: " + "unable to reach gitlab api");
+            res.status(404).json({message: "Unable to reach gitlab api"});
         }
     });
 });

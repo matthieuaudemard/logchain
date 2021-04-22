@@ -1,2 +1,2 @@
-FROM nginx
-COPY logchain-front/dist/ /usr/share/nginx/html
+FROM node:12.19.0
+RUN npm install -g ganache-cli

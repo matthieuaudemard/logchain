@@ -1,11 +1,15 @@
 const express = require('express');
 const app = express();
-const port = process.env.port || 3333;
+const port = process.env.API_PORT;
+const gitlab = process.env.GITLAB_URL;
 const Web3 = require('web3');
-const web3 = new Web3('ws://blockchain:8545');
+const blockchainAddress = process.env.BLOCKCHAIN_ADDRESS;
+const web3 = new Web3('ws://' + blockchainAddress);
 const request = require('request');
 const Logchain = require('./abis/Logchain.json');
-//const account = '0x0C21A3682a197D0550fcAFb4A1b1Cf7262adeebb';
+const projecttoken = process.env.PROJECT_TOKEN;
+const projectid = process.env.PROJECT_ID
+
 
 // autorisation des CORS
 app.use(function (req, res, next) {
@@ -15,7 +19,7 @@ app.use(function (req, res, next) {
 });
 
 app.get('/api/jobs', async function (req, res) {
-    const networkId = await web3.eth.net.getId().catch(() => res.status(500).json({msg: 'cannot access to networkId', job: 'job'}));
+    const networkId = await web3.eth.net.getId().catch(() => res.status(500).json({msg: 'cannot access to networkId'}));
     const networkData = Logchain.networks[networkId];
     console.log("[" + new Date() + "]: received request for jobs listing");
     if (networkData) {
@@ -49,16 +53,16 @@ app.get('/api/jobs/:blockId', async function (req, res) {
 
 app.post('/api/jobs/:id', async function (req, res) {
     const jobId = req.params.id;
-    // Récupération des donées du job depuis l'api gitlab
+    // Récupération des donées du job depuis l'api gitlab;
     request({
         // TODO: charger l'adresse de l'api à l'aide d'une variable (package.json ?) plutôt qu'en dur
-        url: 'http://192.168.1.48/api/v4/projects/4/jobs/' + jobId,
-        headers: {'Authorization': 'Bearer QxQzxCkqWSxjvHFdG4sc'},
+        url: gitlab + '/api/v4/projects/' + projectid + '/jobs/' + jobId,
+        headers: {'Authorization': 'Bearer ' + projecttoken},
         rejectUnauthorized: false
     }, async function (error, response) {
         if (!error) {
-            const accounts = await web3.eth.getAccounts().catch(err => res.status(400).json({msg: 'error while getting accounts', job: job}));
             const job = JSON.parse(response.body);
+            const accounts = await web3.eth.getAccounts().catch(() => res.status(500).json({msg: 'error while getting accounts', job}));
             const networkId = await web3.eth.net.getId();
             const networkData = Logchain.networks[networkId];
             if (networkData && job && job.id) {
@@ -85,12 +89,12 @@ app.post('/api/jobs/:id', async function (req, res) {
                             )
                             .catch(er => {
                                 console.log("[" + new Date() + "]: " + "unable to send to blockchain");
-                                res.status(400).json({message: 'something went wrong ! find out what 2', er})
+                                res.status(500).json({message: 'something went wrong ! find out what 2', er})
                             });
                     })
                     .catch(er => {
                         console.log("[" + new Date() + "]: " + "unable to compute gas needed");
-                        res.status(400).json({message: 'something went wrong ! find out what 1', er})
+                        res.status(500).json({message: 'something went wrong ! find out what 1', er})
                     });
             } else {
                 console.log("[" + new Date() + "]: unable to find network data");

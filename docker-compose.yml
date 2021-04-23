@@ -37,3 +37,9 @@ services:
     depends_on:
       - blockchain
     restart: always
+    environment:
+      - GITLAB_URL=$GITLAB_URL
+      - API_PORT=$API_PORT
+      - PROJECT_TOKEN=$PROJECT_TOKEN
+      - PROJECT_ID=$PROJECT_ID
+      - BLOCKCHAIN_ADDRESS=$BLOCKCHAIN_ADDRESS

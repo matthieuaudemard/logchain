@@ -485,3 +485,5 @@ $RECYCLE.BIN/
 
 # End of https://www.toptal.com/developers/gitignore/api/git,macos,linux,vscode,angular,windows,webstorm,intellij,notepadpp,sublimetext,soliditytruffle,visualstudiocode,node
 /ganache_data/
+
+config/local.env

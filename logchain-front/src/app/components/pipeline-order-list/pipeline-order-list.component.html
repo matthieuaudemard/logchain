@@ -1,0 +1,20 @@
+<p-timeline [value]="pipelines">
+  <ng-template pTemplate="marker" let-pipeline>
+        <span class="custom-marker p-shadow-2">
+            <i [ngClass]="{
+            'pipeline-icon fas': true,
+            'fa-check-circle pipeline-success': pipeline.status === 'success',
+            'fa-minus-circle pipeline-canceled': pipeline.status === 'canceled',
+            'fa-times-circle pipeline-failed': pipeline.status === 'failed'
+            }"></i>
+        </span>
+  </ng-template>
+  <ng-template pTemplate="content" let-pipeline>
+    <small class="p-text-secondary">{{pipeline.startedAt | date:'medium'}}</small>
+  </ng-template>
+  <ng-template pTemplate="opposite" let-pipeline>
+    <span class="pipeline-id">#{{pipeline.id}} </span>
+    <span class="branch-name"> <i class="fas fa-code-branch"> {{pipeline.ref}}</i></span>
+    <span class="commit-sha"> &#8212; {{pipeline.sha | slice:0:8}}</span>
+  </ng-template>
+</p-timeline>

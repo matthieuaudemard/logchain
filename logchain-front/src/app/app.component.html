@@ -1,4 +1,8 @@
 <h1>{{title}}</h1>
-<app-event-order-list></app-event-order-list>
+<p-selectButton [options]="displays" [(ngModel)]="displayMode" optionLabel="label"></p-selectButton>
+<ng-container [ngSwitch]="displayMode.code">
+  <app-event-order-list *ngSwitchCase="'TIMELINE'" [pipelines]="pipelines"></app-event-order-list>
+  <app-job-table *ngSwitchCase="'TABLE'" [pipelines]="pipelines"></app-job-table>
+</ng-container>
 <router-outlet></router-outlet>
 

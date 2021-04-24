@@ -1,46 +1,19 @@
-image: docker
-
-services:
-  - docker:dind
-
 stages:
-  - test
-  - build
-  - deploy
+  - wrapped-pipeline
+  - notify
 
-test:
-  stage: test
-  script:
-    - let job_id=$CI_JOB_ID-1
-    - echo $job_id
-  tags:
-    - cli
+nested-ci:
+  stage: wrapped-pipeline
+  allow_failure: true
+  trigger:
+    include: .nested-gitlab-ci.yml
+    strategy: depend
 
-
-docker-build:
-  stage: build
-  before_script:
-    - echo 'pruning docker images'
-    - sudo docker image prune -f
-    - sudo docker login -u $CI_REGISTRY_USER -p $CI_JOB_TOKEN $CI_REGISTRY_IMAGE
-  script:
-    - sudo docker-compose --env-file ./config/gitlab.env build --no-cache
-  after_script:
-    - curl -X POST http://localhost:3333/api/jobs/$CI_JOB_ID
-  tags:
-    - cli
-  only:
-    - master
-
-deploy:
-  stage: deploy
-  before_script:
-    - sudo docker login -u $CI_REGISTRY_USER -p $CI_JOB_TOKEN $CI_REGISTRY_IMAGE
-  script:
-    - sudo docker-compose --env-file ./config/gitlab.env up -d
-  after_script:
-    - curl -X POST http://localhost:3333/api/jobs/$CI_JOB_ID
-  tags:
-    - cli
-  only:
-    - master
+persist:
+  stage: notify
+  script: ## TODO: insérer l'appel à l'api + appel token variable
+    - let pipeline_id=$CI_PIPELINE_ID+1
+    - echo $pipeline_id
+    - url="$CI_API_V4_URL/projects/4/pipelines/$pipeline_id?access_token=QxQzxCkqWSxjvHFdG4sc"
+    - echo $url
+    - curl $url

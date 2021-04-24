@@ -1,0 +1,58 @@
+stages:
+  - test
+  - build
+  - deploy
+
+.back-setup:
+  before_script:
+    - cd logchain-back
+    - npm install --silence
+
+truffle-test:
+  extends: .back-setup
+  stage: test
+  script:
+    - npm install -g ganache-cli truffle
+    - ganache-cli --host 127.0.0.1 --port 7545 &
+    - truffle migrate --network test && truffle test
+  tags:
+    - node
+
+.web-client-setup:
+  before_script:
+    - cd logchain-front
+    - npm install --silence
+  tags:
+    - node
+
+ng-build:
+  extends: .web-client-setup
+  stage: build
+  script:
+    - npm install -g @angular/cli --silence
+    - ng build
+
+docker-build:
+  stage: build
+  before_script:
+    - echo 'pruning docker images'
+    - sudo docker image prune -f
+    - sudo docker login -u $CI_REGISTRY_USER -p $CI_JOB_TOKEN $CI_REGISTRY_IMAGE
+  script:
+    - sudo docker-compose --env-file ./config/gitlab.env build --no-cache
+  tags:
+    - cli
+  only:
+    - master
+
+deploy:
+  stage: deploy
+  before_script:
+    - sudo docker login -u $CI_REGISTRY_USER -p $CI_JOB_TOKEN $CI_REGISTRY_IMAGE
+  script:
+    - sudo docker-compose --env-file ./config/gitlab.env up -d
+  tags:
+    - cli
+  only:
+    - master
+

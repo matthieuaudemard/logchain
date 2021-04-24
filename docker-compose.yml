@@ -34,6 +34,7 @@ services:
     build: logchain-back # specify the directory of the Dockerfile
     ports:
       - "3333:3333" #specify ports forwarding
+    hostname: api
     depends_on:
       - blockchain
     restart: always

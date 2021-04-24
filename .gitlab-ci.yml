@@ -1,56 +1,18 @@
 stages:
-  - ng-build
-  - docker-build
-  - deploy
+  - wrapped-pipeline
+  - notify
 
-variables:
-  IMAGE_TAG: $CI_REGISTRY_IMAGE:$CI_COMMIT_SHA
+nested-ci:
+  stage: wrapped-pipeline
+  allow_failure: true
+  trigger:
+    include: .nested-gitlab-ci.yml
+    strategy: depend
 
-ng-build:
-  stage: ng-build
-  before_script:
-    - npm install -g @angular/cli
-    - cd logchain-front
-  script:
-    - npm install --silent
-    - ng build
-  tags:
-    - node
-  artifacts:
-    paths:
-      - logchain-front/dist
-
-docker-build:
-  stage: docker-build
-  only:
-    - develop
-    - master
-  tags:
-    - cli
-  before_script:
-    - sudo docker login -u $CI_REGISTRY_USER -p $CI_JOB_TOKEN $CI_REGISTRY_IMAGE
-  script:
-    - echo $IMAGE_TAG
-    - sudo docker build -t $IMAGE_TAG .
-    - sudo docker push $IMAGE_TAG
-
-deploy:
-  stage: deploy
-  only:
-    - master
-    - develop
-  tags:
-    - cli
-  before_script:
-    - sudo docker login -u $CI_REGISTRY_USER -p $CI_JOB_TOKEN $CI_REGISTRY_IMAGE
-  script:
-    - >
-      if [ "$CI_COMMIT_BRANCH" == "master" ]; then
-        NAME="logchain-master";
-        OUT_PORT="8000";
-      else
-        NAME="logchain-dev";
-        OUT_PORT="8003";
-      fi
-    - sudo docker rm -f ${NAME} && echo 'Suppression du container précédent'
-    - sudo docker run -d --name ${NAME} -p ${OUT_PORT}:80 $IMAGE_TAG
+persist:
+  stage: notify
+  script: ## TODO: insérer l'appel à l'api + appel token variable
+    - let pipeline_id=$CI_PIPELINE_ID+1
+    - echo $pipeline_id
+    - url="http://localhost:3333/api/pipelines/$pipeline_id"
+    - curl $url

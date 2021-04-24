@@ -1,62 +1,57 @@
 pragma solidity >=0.4.22 <0.9.0;
 
 contract Logchain {
-    uint public jobCount = 0;
-    mapping(uint => Job) public jobs;
+    uint public pipelineCount = 0;
+    mapping(uint => Pipeline) public pipelines;
 
-    struct Job {
+    struct Pipeline {
         uint blockId;
-        uint jobId;
-        string jobName;
-        string jobStage;
-        string jobStatus;
-        string jobStartedAt;
-        string commitSha;
-        string commitTitle;
+        uint id;
+        string status;
+        string startedAt;
+        string finishedAt;
+        string sha;
+        string ref;
     }
 
-    event JobCreated(
+    event PipelineCreated(
         uint blockId,
-        uint jobId,
-        string jobName,
-        string jobStage,
-        string jobStatus,
-        string jobStartedAt,
-        string commitSha,
-        string commitTitle
+        uint id,
+        string status,
+        string startedAt,
+        string finishedAt,
+        string sha,
+        string ref
     );
 
     constructor() public {
     }
 
-    function createJob(
-        uint _jobId,
-        string memory _jobName,
-        string memory _jobStage,
-        string memory _jobStatus,
-        string memory _jobStartedAt,
-        string memory _commitSha,
-        string memory _commitTitle
+    function createPipeline(
+        uint _id,
+        string memory _status,
+        string memory _startedAt,
+        string memory _finishedAt,
+        string memory _sha,
+        string memory _ref
     ) public {
-        require(_jobId > 0);
-        jobCount ++;
-        jobs[jobCount] = Job(
-            jobCount,
-            _jobId,
-            _jobName,
-            _jobStage,
-            _jobStatus,
-            _jobStartedAt,
-            _commitSha,
-            _commitTitle);
-        emit JobCreated(
-            jobCount,
-            _jobId,
-            _jobName,
-            _jobStage,
-            _jobStatus,
-            _jobStartedAt,
-            _commitSha,
-            _commitTitle);
+        require(_id > 0);
+        pipelineCount ++;
+        pipelines[pipelineCount] = Pipeline(
+            pipelineCount,
+            _id,
+            _status,
+            _startedAt,
+            _finishedAt,
+            _sha,
+            _ref);
+        emit PipelineCreated(
+            pipelineCount,
+            _id,
+            _status,
+            _startedAt,
+            _finishedAt,
+            _sha,
+            _ref);
     }
 }

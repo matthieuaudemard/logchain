@@ -1,20 +1,20 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { JobOrderListComponent } from './job-order-list.component';
+import { PipelineTableComponent } from './pipeline-table.component';
 
-describe('EventOrderListComponent', () => {
-  let component: JobOrderListComponent;
-  let fixture: ComponentFixture<JobOrderListComponent>;
+describe('PipelineTableComponent', () => {
+  let component: PipelineTableComponent;
+  let fixture: ComponentFixture<PipelineTableComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ JobOrderListComponent ]
+      declarations: [ PipelineTableComponent ]
     })
     .compileComponents();
   });
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(JobOrderListComponent);
+    fixture = TestBed.createComponent(PipelineTableComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

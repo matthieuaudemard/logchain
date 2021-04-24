@@ -54,7 +54,6 @@ app.post('/api/pipelines/:id', async function (req, res) {
     const pipelineId = req.params.id;
     // Récupération des donées du job depuis l'api gitlab;
     request({
-        // TODO: charger l'adresse de l'api à l'aide d'une variable (package.json ?) plutôt qu'en dur
         url: gitlab + '/api/v4/projects/' + projectid + '/pipelines/' + pipelineId,
         headers: {'Authorization': 'Bearer ' + projectToken},
         rejectUnauthorized: false

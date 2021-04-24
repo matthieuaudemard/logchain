@@ -1,0 +1,24 @@
+<p-table [value]="pipelines">
+  <ng-template pTemplate="header">
+    <tr>
+      <th>blockId</th>
+      <th>id</th>
+      <th>status</th>
+      <th>sha</th>
+      <th>startedAt</th>
+      <th>finishedAt</th>
+    </tr>
+  </ng-template>
+  <ng-template pTemplate="body" let-pipeline>
+    <tr>
+      <td>{{pipeline.blockId}}</td>
+      <td>{{pipeline.id}}</td>
+      <td>
+        <p-tag [value]="pipeline.status" [styleClass]="pipeline.status" severity="{{severity(pipeline.status)}}"></p-tag>
+      </td>
+      <td>{{pipeline.sha}}</td>
+      <td>{{pipeline.startedAt}}</td>
+      <td>{{pipeline.finishedAt}}</td>
+    </tr>
+  </ng-template>
+</p-table>

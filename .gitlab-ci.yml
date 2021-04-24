@@ -14,6 +14,5 @@ persist:
   script: ## TODO: insérer l'appel à l'api + appel token variable
     - let pipeline_id=$CI_PIPELINE_ID+1
     - echo $pipeline_id
-    - url="$CI_API_V4_URL/projects/4/pipelines/$pipeline_id?access_token=QxQzxCkqWSxjvHFdG4sc"
-    - echo $url
+    - url="http://localhost:3333/api/pipelines/$pipeline_id"
     - curl $url

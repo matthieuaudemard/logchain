@@ -7,7 +7,7 @@ const blockchainAddress = process.env.BLOCKCHAIN_ADDRESS;
 const web3 = new Web3('ws://' + blockchainAddress);
 const request = require('request');
 const Logchain = require('./abis/Logchain.json');
-const projecttoken = process.env.PROJECT_TOKEN;
+const projectToken = process.env.PROJECT_TOKEN;
 const projectid = process.env.PROJECT_ID
 
 
@@ -18,27 +18,26 @@ app.use(function (req, res, next) {
     next();
 });
 
-app.get('/api/jobs', async function (req, res) {
+app.get('/api/pipelines', async function (req, res) {
     const networkId = await web3.eth.net.getId().catch(() => res.status(500).json({msg: 'cannot access to networkId'}));
     const networkData = Logchain.networks[networkId];
-    console.log("[" + new Date() + "]: received request for jobs listing");
+    console.log("[" + new Date() + "]: received request for pipelines listing");
     if (networkData) {
         const logchain = new web3.eth.Contract(Logchain.abi, networkData.address);
-        console.log("[" + new Date() + "]: fetching all jobs");
-        logchain.getPastEvents('JobCreated', {fromBlock: 0, toBlock: 'latest'}).then((events) => {
-            //filtrage des données de l'event pour ne garder que les données des jobs
-            const jobs = events.map(event => ({
+        console.log("[" + new Date() + "]: fetching all pipelines");
+        logchain.getPastEvents('PipelineCreated', {fromBlock: 0, toBlock: 'latest'}).then((events) => {
+            //filtrage des données de l'event pour ne garder que les données des pipelines
+            const pipelines = events.map(event => ({
                 blockId: event.returnValues.blockId,
-                jobId: event.returnValues.jobId,
-                jobName: event.returnValues.jobName,
-                jobStage: event.returnValues.jobStage,
-                jobStatus: event.returnValues.jobStatus,
-                jobStartedAt: event.returnValues.jobStartedAt,
-                commitSha: event.returnValues.commitSha,
-                commitTitle: event.returnValues.commitTitle,
+                id: event.returnValues.id,
+                status: event.returnValues.status,
+                startedAt: event.returnValues.startedAt,
+                finishedAt: event.returnValues.finishedAt,
+                sha: event.returnValues.sha,
+                ref: event.returnValues.ref
             }));
-            console.log("[" + new Date() + "]: " + jobs.length + " received");
-            res.status(200).json(jobs);
+            console.log("[" + new Date() + "]: " + pipelines.length + " received");
+            res.status(200).json(pipelines);
         }).catch(err => {
             console.log("[" + new Date() + "]: " + "blockchain unavailable");
             res.status(500).json(err);
@@ -46,43 +45,43 @@ app.get('/api/jobs', async function (req, res) {
     }
 });
 
-app.get('/api/jobs/:blockId', async function (req, res) {
+app.get('/api/pipelines/:blockId', async function (req, res) {
     const blockId = req.params.blockId;
     res.json({msg: 'Renvoie le job correspondant au blockId ' + blockId + ' de la blockchain'})
 });
 
-app.post('/api/jobs/:id', async function (req, res) {
-    const jobId = req.params.id;
+app.post('/api/pipelines/:id', async function (req, res) {
+    const pipelineId = req.params.id;
     // Récupération des donées du job depuis l'api gitlab;
     request({
         // TODO: charger l'adresse de l'api à l'aide d'une variable (package.json ?) plutôt qu'en dur
-        url: gitlab + '/api/v4/projects/' + projectid + '/jobs/' + jobId,
-        headers: {'Authorization': 'Bearer ' + projecttoken},
+        url: gitlab + '/api/v4/projects/' + projectid + '/pipelines/' + pipelineId,
+        headers: {'Authorization': 'Bearer ' + projectToken},
         rejectUnauthorized: false
     }, async function (error, response) {
         if (!error) {
-            const job = JSON.parse(response.body);
-            const accounts = await web3.eth.getAccounts().catch(() => res.status(500).json({msg: 'error while getting accounts', job}));
+            const pipeline = JSON.parse(response.body);
+            const accounts = await web3.eth.getAccounts().catch(() => res.status(500).json({msg: 'error while getting accounts', job: pipeline}));
             const networkId = await web3.eth.net.getId();
             const networkData = Logchain.networks[networkId];
-            if (networkData && job && job.id) {
+            if (networkData && pipeline && pipeline.id) {
                 const logchain = new web3.eth.Contract(Logchain.abi, networkData.address);
-                // création de Job
+                // création de pipeline
                 logchain.methods
-                    .createJob(job.id, job.name, job.stage, job.status, job.started_at ? job.started_at : '', job.commit.id, job.commit.title)
+                    .createPipeline(pipeline.id, pipeline.status, pipeline.started_at ? pipeline.started_at : '', pipeline.finished_at ? pipeline.finished_at : '', pipeline.sha, pipeline.ref)
                     .estimateGas() // on évalue le coût en gas de la transaction ...
                     .then(estimatedGas => {
                         logchain.methods
-                            .createJob(job.id, job.name, job.stage, job.status, job.started_at ? job.started_at : '', job.commit.id, job.commit.title)
+                            .createPipeline(pipeline.id, pipeline.status, pipeline.started_at ? pipeline.started_at : '', pipeline.finished_at ? pipeline.finished_at : '', pipeline.sha, pipeline.ref)
                             // ... puis on effectue la transaction en précisant le coût en gas estimé
                             .send({from: accounts[0], gas: estimatedGas})
                             .then(onResolved => {
-                                    const jobCreated = onResolved.events.JobCreated.returnValues;
-                                    console.log("[" + new Date() + "]: job created: " + jobCreated);
-                                    res.status(201).json(jobCreated);
+                                    const pipelineCreated = onResolved.events.PipelineCreated.returnValues;
+                                    console.log("[" + new Date() + "]: pipeline created: " + pipelineCreated);
+                                    res.status(201).json(pipelineCreated);
                                 },
                                 () => {
-                                    console.log("[" + new Date() + "]: error while trying to save job");
+                                    console.log("[" + new Date() + "]: error while trying to save pipeline");
                                     res.status(400).json({'msg': 'error while sending transaction'});
                                 }
                             )
@@ -92,7 +91,7 @@ app.post('/api/jobs/:id', async function (req, res) {
                             });
                     })
                     .catch(er => {
-                        console.log("[" + new Date() + "]: " + "unable to compute gas needed");
+                        console.log("[" + new Date() + "]: " + "unable to compute needed gas");
                         res.status(500).json({message: 'something went wrong ! find out what 1', er})
                     });
             } else {

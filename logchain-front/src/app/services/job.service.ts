@@ -7,7 +7,7 @@ import {HttpClient} from '@angular/common/http';
   providedIn: 'root'
 })
 export class JobService {
-  private readonly API_URL = 'http://localhost:3333';
+  private readonly API_URL = 'http://localhost:3333/api';
 
   constructor(private httpClient: HttpClient) {
   }
@@ -16,6 +16,6 @@ export class JobService {
    * Renvoie tous les LogEntry enregistrés sur la blockchain
    */
   public getAll(): Observable<Job[]> {
-    return this.httpClient.get<Job[]>(this.API_URL + '/api/jobs');
+    return this.httpClient.get<Job[]>(this.API_URL + '/jobs');
   }
 }

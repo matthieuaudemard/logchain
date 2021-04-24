@@ -76,8 +76,7 @@ app.post('/api/jobs/:id', async function (req, res) {
                             .createJob(job.id, job.name, job.stage, job.status, job.started_at ? job.started_at : '', job.commit.id, job.commit.title)
                             // ... puis on effectue la transaction en précisant le coût en gas estimé
                             .send({from: accounts[0], gas: estimatedGas})
-                            .then(
-                                onResolved => {
+                            .then(onResolved => {
                                     const jobCreated = onResolved.events.JobCreated.returnValues;
                                     console.log("[" + new Date() + "]: job created: " + jobCreated);
                                     res.status(201).json(jobCreated);

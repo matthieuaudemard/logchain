@@ -27,7 +27,7 @@ services:
     links:
       - server
     ports:
-      - "4200:4200" # specify port forwarding
+      - "4200:80" # specify port forwarding
 
   server: #name of the second service
     image: "$REGISTRY/back:latest"

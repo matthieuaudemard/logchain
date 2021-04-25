@@ -19,7 +19,6 @@ truffle-test:
     - node
   except:
     - master
-    - develop
 
 .web-client-setup:
   before_script:
@@ -36,7 +35,6 @@ ng-build:
     - ng build
   except:
     - master
-    - develop
 
 docker-build:
   stage: build

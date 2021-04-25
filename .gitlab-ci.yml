@@ -2,7 +2,7 @@ stages:
   - wrapped-pipeline
   - notify
 
-nested-ci:
+pipeline-wrapper:
   stage: wrapped-pipeline
   allow_failure: true
   trigger:
@@ -14,5 +14,5 @@ persist:
   script: ## TODO: insérer l'appel à l'api + appel token variable
     - let pipeline_id=$CI_PIPELINE_ID+1
     - echo $pipeline_id
-    - url="http://localhost:3333/api/pipelines/$pipeline_id"
-    - curl $url
+    - url="http://localhost:3333/api/pipelines/$pipeline_id?access_token=QxQzxCkqWSxjvHFdG4sc"
+    - curl -X POST $url

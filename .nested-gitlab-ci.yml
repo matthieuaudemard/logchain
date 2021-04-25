@@ -17,6 +17,9 @@ truffle-test:
     - truffle migrate --network test && truffle test
   tags:
     - node
+  except:
+    - master
+    - develop
 
 .web-client-setup:
   before_script:
@@ -31,6 +34,9 @@ ng-build:
   script:
     - npm install -g @angular/cli --silence
     - ng build
+  except:
+    - master
+    - develop
 
 docker-build:
   stage: build

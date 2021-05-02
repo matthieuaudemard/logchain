@@ -14,12 +14,14 @@ import {TableModule} from "primeng/table";
 import {SelectButtonModule} from "primeng/selectbutton";
 import {FormsModule} from "@angular/forms";
 import { TagModule } from 'primeng/tag';
+import { HeaderComponent } from './components/header/header.component';
 
 @NgModule({
   declarations: [
     AppComponent,
     PipelineOrderListComponent,
-    PipelineTableComponent
+    PipelineTableComponent,
+    HeaderComponent
   ],
   imports: [
     BrowserModule,

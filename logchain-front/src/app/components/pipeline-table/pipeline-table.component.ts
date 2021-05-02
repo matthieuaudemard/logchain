@@ -13,18 +13,15 @@ export class PipelineTableComponent {
   severityMap = new Map<string,string>([
     ['success','success'],
     ['failed','danger'],
-    ['cancel','warning'],
+    ['canceled','warning'],
+    ['skipped','info'],
   ]);
 
   constructor() { }
 
   public severity(status : string) : string {
-    if(status === 'success'){
-      return 'success';
-    } else if (status === 'failed'){
-      return 'danger';
-    } else if (status === 'cancel'){
-      return 'warning';
+    if(this.severityMap.has(status)){
+      return this.severityMap.get(status) as string;
     }
     return 'info';
   }

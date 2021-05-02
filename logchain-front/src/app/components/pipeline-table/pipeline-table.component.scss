@@ -1,5 +1,16 @@
 @import 'src/assets/variables';
 
-.success {
-  background-color: $success-color;
+::ng-deep {
+  .p-tag-success {
+    background-color: $success-color!important;
+  }
+  .p-tag-canceled {
+    background-color: $canceled-color!important;
+  }
+  .p-tag-failed {
+    background-color: $failed-color!important;
+  }
+  .p-tag-info {
+    background-color: $skipped-color!important;
+  }
 }

@@ -1,24 +1,38 @@
-<p-table [value]="pipelines">
-  <ng-template pTemplate="header">
-    <tr>
-      <th>blockId</th>
-      <th>id</th>
-      <th>status</th>
-      <th>sha</th>
-      <th>startedAt</th>
-      <th>finishedAt</th>
-    </tr>
-  </ng-template>
-  <ng-template pTemplate="body" let-pipeline>
-    <tr>
-      <td>{{pipeline.blockId}}</td>
-      <td>{{pipeline.id}}</td>
-      <td>
-        <p-tag [value]="pipeline.status" [styleClass]="pipeline.status" severity="{{severity(pipeline.status)}}"></p-tag>
-      </td>
-      <td>{{pipeline.sha}}</td>
-      <td>{{pipeline.startedAt}}</td>
-      <td>{{pipeline.finishedAt}}</td>
-    </tr>
-  </ng-template>
-</p-table>
+<div class="card ml-5 mr-5">
+  <p-table [value]="pipelines">
+    <ng-template pTemplate="header">
+      <tr>
+        <th pSortableColumn="blockId">blockId
+          <p-sortIcon field="blockId"></p-sortIcon>
+        </th>
+        <th pSortableColumn="id">id
+          <p-sortIcon field="id"></p-sortIcon>
+        </th>
+        <th pSortableColumn="status">status
+          <p-sortIcon field="status"></p-sortIcon>
+        </th>
+        <th pSortableColumn="sha">sha
+          <p-sortIcon field="sha"></p-sortIcon>
+        </th>
+        <th pSortableColumn="startedAt">startedAt
+          <p-sortIcon field="startedAt"></p-sortIcon>
+        </th>
+        <th pSortableColumn="finishedAt">finishedAt
+          <p-sortIcon field="finishedAt"></p-sortIcon>
+        </th>
+      </tr>
+    </ng-template>
+    <ng-template pTemplate="body" let-pipeline>
+      <tr>
+        <td>{{pipeline.blockId}}</td>
+        <td>{{pipeline.id}}</td>
+        <td>
+          <p-tag [value]="pipeline.status" severity="{{severity(pipeline.status)}}"></p-tag>
+        </td>
+        <td>{{pipeline.sha}}</td>
+        <td>{{pipeline.startedAt | date:'medium'}}</td>
+        <td>{{pipeline.finishedAt | date:'medium'}}</td>
+      </tr>
+    </ng-template>
+  </p-table>
+</div>

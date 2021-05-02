@@ -1,8 +1,12 @@
-<h1>{{title}}</h1>
-<p-selectButton [options]="displays" [(ngModel)]="displayMode" optionLabel="label"></p-selectButton>
+<app-header></app-header>
+<div class="row col justify-content-end mt-5 mb-5">
+  <p-selectButton [options]="displays" [(ngModel)]="displayMode" optionLabel="label"></p-selectButton>
+</div>
+
 <ng-container [ngSwitch]="displayMode.code">
   <app-event-order-list *ngSwitchCase="'TIMELINE'" [pipelines]="pipelines"></app-event-order-list>
-  <app-job-table *ngSwitchCase="'TABLE'" [pipelines]="pipelines"></app-job-table>
+  <app-job-table class="ml-5 mr-5" *ngSwitchCase="'TABLE'" [pipelines]="pipelines"></app-job-table>
 </ng-container>
+
 <router-outlet></router-outlet>
 

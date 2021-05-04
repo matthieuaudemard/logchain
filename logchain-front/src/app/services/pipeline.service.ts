@@ -8,17 +8,15 @@ import {environment} from "../../environments/environment";
   providedIn: 'root'
 })
 export class PipelineService {
-
-  private readonly apiUrl = 'http://' + location.hostname + ':3333/api';
+  private readonly API_URL = 'http://' + location.hostname + ':3333/api';
 
   constructor(private httpClient: HttpClient) {
   }
 
   /**
-   * Renvoie tous les LogEntry enregistrés sur la blockchain
+   * Renvoie toutes les enregistrés sur la blockchain
    */
   public getAll(): Observable<Pipeline[]> {
-    console.log(this.apiUrl);
-    return this.httpClient.get<Pipeline[]>(this.apiUrl + '/pipelines');
+    return this.httpClient.get<Pipeline[]>(this.API_URL + '/pipelines');
   }
 }

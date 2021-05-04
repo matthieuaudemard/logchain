@@ -1,7 +1,7 @@
 const express = require('express');
 const app = express();
 const port = process.env.API_PORT;
-const gitlab = process.env.GITLAB_URL;
+const GITLAB_API_URL = process.env.GITLAB_API_URL;
 const Web3 = require('web3');
 const blockchainAddress = process.env.BLOCKCHAIN_ADDRESS;
 const web3 = new Web3('ws://' + blockchainAddress);
@@ -52,9 +52,9 @@ app.get('/api/pipelines/:blockId', async function (req, res) {
 
 app.post('/api/pipelines/:id', async function (req, res) {
     const pipelineId = req.params.id;
-    // Récupération des donées du job depuis l'api gitlab;
+    // Récupération des donées du job depuis l'api GITLAB_API_URL;
     request({
-        url: gitlab + '/api/v4/projects/' + projectid + '/pipelines/' + pipelineId,
+        url: GITLAB_API_URL + '/projects/' + projectid + '/pipelines/' + pipelineId,
         headers: {'Authorization': 'Bearer ' + projectToken},
         rejectUnauthorized: false
     }, async function (error, response) {
@@ -97,8 +97,8 @@ app.post('/api/pipelines/:id', async function (req, res) {
                 console.log("[" + new Date() + "]: unable to find network data");
             }
         } else {
-            console.log("[" + new Date() + "]: " + "unable to reach gitlab api");
-            res.status(404).json({message: "Unable to reach gitlab api"});
+            console.log("[" + new Date() + "]: " + "unable to reach " + GITLAB_API_URL + " api");
+            res.status(404).json({message: "Unable to reach " + GITLAB_API_URL + " api"});
         }
     });
 });

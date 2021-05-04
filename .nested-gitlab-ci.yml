@@ -38,26 +38,16 @@ ng-build:
     - npm install -g @angular/cli --silence
     - ng build
 
-
 .docker:
   tags:
     - cli
   only:
     - master
 
-docker-kill:
-  extends: .docker
-  stage: kill
-  allow_failure: true
-  script:
-    - sudo docker kill logchain_client_1 logchain_server_1 logchain_blockchain_1
-
 docker-build:
   extends: .docker
   stage: build
   before_script:
-    - echo 'pruning docker images'
-    - sudo docker image prune -f
     - sudo docker login -u $CI_REGISTRY_USER -p $CI_JOB_TOKEN $CI_REGISTRY_IMAGE
   script:
     - sudo docker-compose --env-file $ENV_FILE build --no-cache
@@ -69,12 +59,4 @@ deploy:
     - sudo docker login -u $CI_REGISTRY_USER -p $CI_JOB_TOKEN $CI_REGISTRY_IMAGE
   script:
     - sudo docker-compose --env-file $ENV_FILE up -d
-
-docker-prune:
-  extends: .docker
-  stage: clean
-  before_script:
-    - echo 'cleaning ...'
-  script:
-    - sudo docker system prune -af
 

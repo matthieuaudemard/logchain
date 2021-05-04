@@ -48,6 +48,7 @@ ng-build:
 docker-kill:
   extends: .docker
   stage: kill
+  allow_failure: true
   script:
     - sudo docker kill logchain_client_1 logchain_server_1 logchain_blockchain_1
 

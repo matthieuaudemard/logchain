@@ -1,12 +1,16 @@
 stages:
   - test
   - build
+  - kill
   - deploy
+  - clean
 
 .back-setup:
   before_script:
     - cd logchain-back
     - npm install --silence
+  except:
+    - master
 
 truffle-test:
   extends: .back-setup
@@ -17,8 +21,6 @@ truffle-test:
     - truffle migrate --network test && truffle test
   tags:
     - node
-  except:
-    - master
 
 .web-client-setup:
   before_script:
@@ -26,6 +28,8 @@ truffle-test:
     - npm install --silence
   tags:
     - node
+  except:
+    - master
 
 ng-build:
   extends: .web-client-setup
@@ -33,30 +37,43 @@ ng-build:
   script:
     - npm install -g @angular/cli --silence
     - ng build
-  except:
+
+
+.docker:
+  tags:
+    - cli
+  only:
     - master
 
+docker-kill:
+  extends: .docker
+  stage: kill
+  script:
+    - sudo docker kill logchain_client_1 logchain_server_1 logchain_blockchain_1
+
 docker-build:
+  extends: .docker
   stage: build
   before_script:
     - echo 'pruning docker images'
     - sudo docker image prune -f
     - sudo docker login -u $CI_REGISTRY_USER -p $CI_JOB_TOKEN $CI_REGISTRY_IMAGE
   script:
-    - sudo docker-compose --env-file ./config/gitlab.env build --no-cache
-  tags:
-    - cli
-  only:
-    - master
+    - sudo docker-compose --env-file $ENV_FILE build --no-cache
 
 deploy:
+  extends: .docker
   stage: deploy
   before_script:
     - sudo docker login -u $CI_REGISTRY_USER -p $CI_JOB_TOKEN $CI_REGISTRY_IMAGE
   script:
-    - sudo docker-compose --env-file ./config/gitlab.env up -d
-  tags:
-    - cli
-  only:
-    - master
+    - sudo docker-compose --env-file $ENV_FILE up -d
+
+docker-prune:
+  extends: .docker
+  stage: clean
+  before_script:
+    - echo 'cleaning ...'
+  script:
+    - sudo docker system prune -af
 

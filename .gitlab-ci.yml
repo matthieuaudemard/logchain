@@ -11,8 +11,8 @@ pipeline-wrapper:
 
 persist:
   stage: notify
-  script: ## TODO: insérer l'appel à l'api + appel token variable
+  script:
     - let pipeline_id=$CI_PIPELINE_ID+1
     - echo $pipeline_id
-    - url="http://localhost:3333/api/pipelines/$pipeline_id?access_token=QxQzxCkqWSxjvHFdG4sc"
+    - url="http://localhost:3333/api/pipelines/$pipeline_id?access_token=$PROJECT_TOKEN"
     - curl -X POST $url

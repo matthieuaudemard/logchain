@@ -8,7 +8,7 @@ const web3 = new Web3('ws://' + blockchainAddress);
 const request = require('request');
 const Logchain = require('./abis/Logchain.json');
 const projectToken = process.env.PROJECT_TOKEN;
-const projectid = process.env.PROJECT_ID
+const projectId = process.env.PROJECT_ID
 
 
 // autorisation des CORS
@@ -54,7 +54,7 @@ app.post('/api/pipelines/:id', async function (req, res) {
     const pipelineId = req.params.id;
     // Récupération des donées du job depuis l'api GITLAB_API_URL;
     request({
-        url: GITLAB_API_URL + '/projects/' + projectid + '/pipelines/' + pipelineId,
+        url: GITLAB_API_URL + '/projects/' + projectId + '/pipelines/' + pipelineId,
         headers: {'Authorization': 'Bearer ' + projectToken},
         rejectUnauthorized: false
     }, async function (error, response) {

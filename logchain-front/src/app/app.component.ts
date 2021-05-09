@@ -11,16 +11,19 @@ import {EnumDisplay} from "./models/enum-display";
 export class AppComponent implements OnInit {
   title = 'logchain-front';
   pipelines!: Pipeline[];
-  displays: EnumDisplay[] = [
-    {code: 'TIMELINE', label: 'TIMELINE'},
-    {code: 'TABLE', label: 'TABLEAU'},
-  ];
-  displayMode: EnumDisplay = this.displays[0];
+  pipelinesTable!: Pipeline[];
+  displays: EnumDisplay[] = [EnumDisplay.TIMELINE, EnumDisplay.TABLE];
+  displayMode: EnumDisplay = EnumDisplay.TIMELINE;
+  enumDisplay = EnumDisplay;
 
-  constructor(private pipelineService: PipelineService) {}
+  constructor(private pipelineService: PipelineService) {
+  }
 
   ngOnInit(): void {
-    this.pipelineService.getAll().subscribe(pipelines => this.pipelines = pipelines);
+    this.pipelineService.getAll().subscribe(pipelines => {
+      this.pipelines = pipelines.sort((a, b) => (b.id || 0) - (a.id || 0));
+      this.pipelinesTable = [...this.pipelines];
+    });
   }
 
 }

@@ -4,8 +4,8 @@
 </div>
 
 <ng-container [ngSwitch]="displayMode.code">
-  <app-event-order-list *ngSwitchCase="'TIMELINE'" [pipelines]="pipelines"></app-event-order-list>
-  <app-job-table class="ml-5 mr-5" *ngSwitchCase="'TABLE'" [pipelines]="pipelines"></app-job-table>
+  <app-event-order-list *ngSwitchCase="enumDisplay.TIMELINE.code" [pipelines]="pipelinesTable"></app-event-order-list>
+  <app-job-table class="ml-5 mr-5" *ngSwitchCase="enumDisplay.TABLE.code" [pipelines]="pipelines"></app-job-table>
 </ng-container>
 
 <router-outlet></router-outlet>

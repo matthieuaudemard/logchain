@@ -2,36 +2,36 @@
   <p-table [value]="pipelines">
     <ng-template pTemplate="header">
       <tr>
-        <th pSortableColumn="blockId">blockId
-          <p-sortIcon field="blockId"></p-sortIcon>
-        </th>
         <th pSortableColumn="id">id
           <p-sortIcon field="id"></p-sortIcon>
         </th>
         <th pSortableColumn="status">status
           <p-sortIcon field="status"></p-sortIcon>
         </th>
-        <th pSortableColumn="sha">sha
-          <p-sortIcon field="sha"></p-sortIcon>
+        <th pSortableColumn="branch">branch
+          <p-sortIcon field="branch"></p-sortIcon>
         </th>
-        <th pSortableColumn="startedAt">startedAt
-          <p-sortIcon field="startedAt"></p-sortIcon>
+        <th pSortableColumn="commit">commit
+          <p-sortIcon field="commit"></p-sortIcon>
         </th>
-        <th pSortableColumn="finishedAt">finishedAt
-          <p-sortIcon field="finishedAt"></p-sortIcon>
+        <th pSortableColumn="jobs">jobs
+          <p-sortIcon field="jobs"></p-sortIcon>
         </th>
       </tr>
     </ng-template>
     <ng-template pTemplate="body" let-pipeline>
       <tr>
-        <td>{{pipeline.blockId}}</td>
         <td>{{pipeline.id}}</td>
         <td>
-          <p-tag [value]="pipeline.status" severity="{{severity(pipeline.status)}}"></p-tag>
+          <p-tag [value]="pipeline.status" severity="{{severity(pipeline.status)}}" ></p-tag>
         </td>
-        <td>{{pipeline.sha}}</td>
-        <td>{{pipeline.startedAt | date:'medium'}}</td>
-        <td>{{pipeline.finishedAt | date:'medium'}}</td>
+        <td>{{pipeline.branch}}</td>
+        <td>{{pipeline.commit | slice:0:8}}</td>
+        <td class="row col justify-content-start">
+          <div *ngFor="let job of pipeline.jobs">
+            <app-job-details [job]="job"></app-job-details>
+          </div>
+        </td>
       </tr>
     </ng-template>
   </p-table>

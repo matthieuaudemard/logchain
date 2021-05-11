@@ -13,7 +13,8 @@ export class AppComponent implements OnInit {
   pipelines!: Pipeline[];
   pipelinesTable!: Pipeline[];
   displays: EnumDisplay[] = [EnumDisplay.TIMELINE, EnumDisplay.TABLE];
-  displayMode: EnumDisplay = EnumDisplay.TIMELINE;
+  // displays: EnumDisplay[] = [EnumDisplay.TIMELINE, EnumDisplay.TABLE];
+  displayMode: EnumDisplay = EnumDisplay.TABLE;
   enumDisplay = EnumDisplay;
 
   constructor(private pipelineService: PipelineService) {

@@ -1,0 +1,21 @@
+@import 'src/assets/variables';
+
+.pipeline-icon {
+  font-size: 1.2em;
+}
+.pipeline-success {
+  color: $success-color;
+}
+
+.pipeline-canceled {
+  color: $canceled-color;
+}
+
+.pipeline-failed {
+  color: $failed-color;
+}
+
+.pipeline-skipped {
+  color: $skipped-color;
+}
+

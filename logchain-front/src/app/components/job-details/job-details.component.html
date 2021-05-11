@@ -1,0 +1,20 @@
+<div>
+  <p-overlayPanel #op>
+    <ng-template pTemplate>
+        <ul class="list-group">
+          <li class="list-group-item">ID : {{job.id}}</li>
+          <li class="list-group-item">Name : {{job.name}}</li>
+          <li class="list-group-item">Stage : {{job.stage}}</li>
+        </ul>
+    </ng-template>
+  </p-overlayPanel>
+
+  <span class="custom-marker p-shadow-2" (mouseover)="op.show($event, op)" (mouseout)="op.hide()">
+    <i class="pipeline-icon far" [ngClass]="{
+      'fa-check-circle pipeline-success': job.status === 'success',
+      'fa-minus-circle pipeline-canceled': job.status === 'canceled',
+      'fa-times-circle pipeline-failed': job.status === 'failed',
+      'fa-exclamation-circle pipeline-skipped': job.status === 'skipped'
+    }"></i>
+  </span>
+</div>

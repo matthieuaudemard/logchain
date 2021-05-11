@@ -3,7 +3,6 @@ import {BrowserModule} from '@angular/platform-browser';
 import localeFr from '@angular/common/locales/fr';
 import {AppRoutingModule} from './app-routing.module';
 import {AppComponent} from './app.component';
-import {PipelineOrderListComponent} from './components/pipeline-order-list/pipeline-order-list.component';
 import {TimelineModule} from 'primeng/timeline';
 import {SharedModule} from 'primeng/api';
 import {LOCALE_ID} from '@angular/core';
@@ -23,7 +22,6 @@ import {CardModule} from "primeng/card";
 @NgModule({
   declarations: [
     AppComponent,
-    PipelineOrderListComponent,
     PipelineTableComponent,
     HeaderComponent,
     JobDetailsComponent

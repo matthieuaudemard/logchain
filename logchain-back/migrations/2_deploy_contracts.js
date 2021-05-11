@@ -1,5 +1,5 @@
-const Logchain = artifacts.require("Logchain");
+const JobContract = artifacts.require('JobContract');
 
 module.exports = function (deployer) {
-    deployer.deploy(Logchain);
+    deployer.deploy(JobContract);
 };

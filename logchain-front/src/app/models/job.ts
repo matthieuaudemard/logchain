@@ -1,9 +1,8 @@
-import {Job} from "./job";
-
-export interface Pipeline {
+export interface Job {
   id?: number,
   status?: string,
   branch?: string,
+  stage?: string,
+  name?: string,
   commit?: string,
-  jobs?: Job[],
 }

@@ -8,8 +8,8 @@ services:
     ports:
       - "8545:8545" # specify port forwarding
     hostname: blockchain
-    #volumes:
-     # - ./ganache_data:/ganache_data
+    volumes:
+      - ./ganache_data:/ganache_data
     entrypoint:
       - ganache-cli
       - --deterministic

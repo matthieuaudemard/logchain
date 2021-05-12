@@ -26,6 +26,8 @@ services:
     build: logchain-front # specify the directory of the Dockerfile
     links:
       - server
+    depends_on:
+      - server
     ports:
       - "4200:80" # specify port forwarding
 

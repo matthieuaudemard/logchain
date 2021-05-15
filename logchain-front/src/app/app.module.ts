@@ -18,6 +18,8 @@ import {BrowserAnimationsModule} from "@angular/platform-browser/animations";
 import {OverlayPanelModule} from "primeng/overlaypanel";
 import {CardModule} from "primeng/card";
 import {DialogModule} from "primeng/dialog";
+import {ClickOutsideModule} from "ng-click-outside";
+import {TooltipModule} from "primeng/tooltip";
 
 @NgModule({
   declarations: [
@@ -39,6 +41,8 @@ import {DialogModule} from "primeng/dialog";
     OverlayPanelModule,
     CardModule,
     DialogModule,
+    ClickOutsideModule,
+    TooltipModule,
   ],
   providers: [{provide: LOCALE_ID, useValue: 'fr'}],
   bootstrap: [AppComponent]

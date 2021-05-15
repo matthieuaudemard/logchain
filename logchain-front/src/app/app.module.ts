@@ -16,15 +16,14 @@ import {TagModule} from 'primeng/tag';
 import {HeaderComponent} from './components/header/header.component';
 import {BrowserAnimationsModule} from "@angular/platform-browser/animations";
 import {OverlayPanelModule} from "primeng/overlaypanel";
-import { JobDetailsComponent } from './components/job-details/job-details.component';
 import {CardModule} from "primeng/card";
+import {DialogModule} from "primeng/dialog";
 
 @NgModule({
   declarations: [
     AppComponent,
     PipelineTableComponent,
     HeaderComponent,
-    JobDetailsComponent
   ],
   imports: [
     BrowserModule,
@@ -39,6 +38,7 @@ import {CardModule} from "primeng/card";
     BrowserAnimationsModule,
     OverlayPanelModule,
     CardModule,
+    DialogModule,
   ],
   providers: [{provide: LOCALE_ID, useValue: 'fr'}],
   bootstrap: [AppComponent]

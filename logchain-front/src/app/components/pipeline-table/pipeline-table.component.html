@@ -29,10 +29,27 @@
         <td>{{pipeline.commit | slice:0:8}}</td>
         <td class="row col justify-content-start">
           <div *ngFor="let job of pipeline.jobs">
-            <app-job-details [job]="job"></app-job-details>
+              <span class="custom-marker p-shadow-2 job-cursor" (click)="displayJob(job)">
+                <i class="pipeline-icon fa" [ngClass]="{
+                    'fa-check-circle pipeline-success': job.status === 'success',
+                    'fa-minus-circle pipeline-canceled': job.status === 'canceled',
+                    'fa-times-circle pipeline-failed': job.status === 'failed',
+                    'fa-exclamation-circle pipeline-skipped': job.status === 'skipped'
+                }"></i>
+              </span>
           </div>
         </td>
       </tr>
     </ng-template>
   </p-table>
+  <p-dialog header="Job Info" [(visible)]="display">
+    <div class="modal-body">
+      <ul class="list-group">
+        <li>ID : {{currentJob?.id}}</li>
+        <li>Name : {{currentJob?.name}}</li>
+        <li>Stage : {{currentJob?.stage}}</li>
+        <li>Status : {{currentJob?.status}}</li>
+      </ul>
+    </div>
+  </p-dialog>
 </div>

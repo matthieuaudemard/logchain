@@ -23,13 +23,13 @@
       <tr>
         <td>{{pipeline.id}}</td>
         <td>
-          <p-tag [value]="pipeline.status" severity="{{severity(pipeline.status)}}" ></p-tag>
+          <p-tag [value]="pipeline.status" severity="{{severity(pipeline.status)}}"></p-tag>
         </td>
         <td>{{pipeline.branch}}</td>
         <td>{{pipeline.commit | slice:0:8}}</td>
-        <td class="row col justify-content-start">
+        <td class="row col justify-content-start" (clickOutside)="hideJob()">
           <div *ngFor="let job of pipeline.jobs">
-              <span class="custom-marker p-shadow-2 job-cursor" (click)="displayJob(job)">
+              <span class="custom-marker p-shadow-2 cursor-pointer job-pastille" (click)="displayJob(job)" [pTooltip]="job.name" tooltipPosition="top">
                 <i class="pipeline-icon fa" [ngClass]="{
                     'fa-check-circle pipeline-success': job.status === 'success',
                     'fa-minus-circle pipeline-canceled': job.status === 'canceled',
@@ -45,11 +45,16 @@
   <p-dialog header="Job Info" [(visible)]="display">
     <div class="modal-body">
       <ul class="list-group">
-        <li>ID : {{currentJob?.id}}</li>
-        <li>Name : {{currentJob?.name}}</li>
-        <li>Stage : {{currentJob?.stage}}</li>
-        <li>Status : {{currentJob?.status}}</li>
+        <li class="d-flex justify-content-between"><span>ID : </span><span>{{currentJob?.id}}</span></li>
+        <li class="d-flex justify-content-between"><span>Name : </span><span>{{currentJob?.name}}</span></li>
+        <li class="d-flex justify-content-between"><span>Stage : </span><span>{{currentJob?.stage}}</span></li>
+        <li class="text-center pt-3">
+          <p-tag [value]="currentJob?.status || ''" severity="{{severity(currentJob?.status|| '')}}" [rounded]="true"></p-tag>
+        </li>
       </ul>
     </div>
+    <p-footer>
+      esc to close
+    </p-footer>
   </p-dialog>
 </div>

@@ -34,4 +34,8 @@ export class PipelineTableComponent {
     this.currentJob = job;
     this.display = true;
   }
+
+  hideJob() {
+    this.display = false;
+  }
 }

@@ -2,22 +2,48 @@
 
 ::ng-deep {
   .p-tag-success {
-    background-color: $success-color!important;
+    background-color: $success-color !important;
   }
+
   .p-tag-canceled {
-    background-color: $canceled-color!important;
+    background-color: $canceled-color !important;
   }
+
   .p-tag-failed {
-    background-color: $failed-color!important;
+    background-color: $failed-color !important;
   }
+
   .p-tag-info {
-    background-color: $skipped-color!important;
+    background-color: $skipped-color !important;
+  }
+
+  .p-dialog {
+    width: 300px !important;
+  }
+
+  .p-dialog-content {
+    padding: 0 1.5rem 1rem 1.5rem !important;
+    height: 180px;
+  }
+
+  .p-dialog-footer {
+    padding: 0 0.5rem 0.2rem 0.5rem !important;
+    font-size: 12px;
+  }
+
+  .p-dialog-header {
+    padding: 1.5rem 0.5rem 1rem 1.5rem !important;
+  }
+
+  .modal-body {
+    padding: 0 1rem;
   }
 }
 
 .pipeline-icon {
   font-size: 1.2em;
 }
+
 .pipeline-success {
   color: $success-color;
 }
@@ -36,12 +62,13 @@
 
 li {
   list-style-type: none;
+  padding: 5px;
 }
 
-span {
-  padding: 10px;
+.job-pastille {
+  padding: 5px;
 }
 
-.job-cursor {
+.cursor-pointer {
   cursor: pointer;
 }

@@ -37,7 +37,7 @@ router.post('/all', async function (req, res) {
 
 router.post('/:id', async function (req, res) {
     const pipelineId = req.params.id;`${GITLAB_API_URL}/projects/${PROJECT_ID}/pipelines/${pipelineId}/jobs`
-    // Récupération des donées du job depuis l'api GITLAB_API_URL;
+    // Récupération des données du job depuis l'api GITLAB_API_URL;
     fetchJobsAndPersist(`${GITLAB_API_URL}/projects/${PROJECT_ID}/pipelines/${pipelineId}/jobs`, res);
 });
 

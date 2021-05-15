@@ -1,1 +1,1 @@
-docker-compose --env-file config/gitlab.env up -d --build
+docker-compose --env-file config/gitlab.env up -d

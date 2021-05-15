@@ -4,7 +4,7 @@
   "description": "api du projet logchain",
   "main": "src/server.js",
   "scripts": {
-    "start": "truffle migrate --network develop --reset && node src/server.js"
+    "start": "truffle migrate --network develop --compile-all && node src/server.js"
   },
   "author": "",
   "license": "ISC",

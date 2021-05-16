@@ -27,7 +27,7 @@
         </td>
         <td>{{pipeline.branch}}</td>
         <td>{{pipeline.commit | slice:0:8}}</td>
-        <td class="row col justify-content-start" (clickOutside)="hideJob()">
+        <td class="row col justify-content-start">
           <div *ngFor="let job of pipeline.jobs">
               <span class="custom-marker p-shadow-2 cursor-pointer job-pastille" (click)="displayJob(job)" [pTooltip]="job.name" tooltipPosition="top">
                 <i class="pipeline-icon fa" [ngClass]="{

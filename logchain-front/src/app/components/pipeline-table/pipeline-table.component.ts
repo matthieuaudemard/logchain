@@ -1,4 +1,4 @@
-import {Component, Input} from '@angular/core';
+import {Component, HostListener, Input} from '@angular/core';
 import {Pipeline} from "../../models/pipeline";
 import {Job} from "../../models/job";
 
@@ -20,6 +20,11 @@ export class PipelineTableComponent {
     ['skipped', 'info'],
   ]);
 
+  @HostListener('document:keydown.escape', ['$event'])
+  handleKeyboardEvent() {
+    this.display = false; // masque la modal
+  }
+
   constructor() {
   }
 
@@ -33,9 +38,5 @@ export class PipelineTableComponent {
   displayJob(job: Job) {
     this.currentJob = job;
     this.display = true;
-  }
-
-  hideJob() {
-    this.display = false;
   }
 }
